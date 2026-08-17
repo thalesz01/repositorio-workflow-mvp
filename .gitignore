@@ -1,0 +1,75 @@
+# ---------------------------------------------
+# .NET / Visual Studio
+# ---------------------------------------------
+
+# Saídas de build
+[Bb]in/
+[Oo]bj/
+[Oo]ut/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+*.dll
+*.exe
+*.pdb
+*.deps.json
+*.runtimeconfig.json
+
+# Cache e configuração local do Visual Studio / VS Code / Rider
+.vs/
+.vscode/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.userprefs
+*.Backup.tmp
+*.csproj.AssemblyReference.cache
+
+# NuGet
+*.nupkg
+*.snupkg
+packages/
+!packages/build/
+project.lock.json
+project.fragment.lock.json
+
+# Resultados de teste e cobertura
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+coverage*.json
+coverage*.xml
+coverage*.info
+*.coverage
+*.coveragexml
+
+# Logs e temporários
+*.log
+*.tmp
+*.cache
+*~
+
+# ---------------------------------------------
+# Segredos e configuração de ambiente
+# NUNCA versionar credenciais. Use `dotnet user-secrets`
+# ou variáveis de ambiente. Ver README.md.
+# ---------------------------------------------
+*.env
+.env.*
+appsettings.Local.json
+appsettings.*.Local.json
+secrets.json
+
+# ---------------------------------------------
+# Sistema operacional
+# ---------------------------------------------
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store

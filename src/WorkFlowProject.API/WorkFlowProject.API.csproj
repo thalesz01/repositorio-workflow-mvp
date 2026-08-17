@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>dotnet-WorkFlowProject.API-b399bd98-b12c-4908-88f3-ca43ac55af9d</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.11" />
+    <PackageReference Include="Scalar.AspNetCore" Version="2.12.30" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\WorkFlowProject.Domain\WorkFlowProject.Domain.csproj" />
+    <ProjectReference Include="..\WorkFlowProject.Infrastructure\WorkFlowProject.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>
