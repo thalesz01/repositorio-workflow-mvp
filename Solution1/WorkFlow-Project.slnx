@@ -1,0 +1,14 @@
+<Solution>
+  <Folder Name="/API/">
+    <Project Path="src/WorkFlow.Aplication/WorkFlowProject.API/WorkFlowProject.API.csproj" Id="c9d851d8-b869-41de-8355-8a5e01d3dad4" />
+  </Folder>
+  <Folder Name="/Domain/">
+    <Project Path="src/WorkFlow.Domain/WorkFlowProject.Domain/WorkFlowProject.Domain.csproj" Id="d4f9975d-73e7-4efe-a2af-53c74e4bef52" />
+  </Folder>
+  <Folder Name="/Infraestruction/">
+    <Project Path="src/WorkFlow.Infraestruction/WorkFlowProject.Infraestruction/WorkFlowProject.Infraestruction.csproj" Id="96a0a30d-1e65-4f60-b9fe-b869a515255f" />
+  </Folder>
+  <Folder Name="/Worker/">
+    <Project Path="src/WorkFlow.Worker/WorkerFlowProject.Worker/WorkerFlowProject.Worker.csproj" Id="ab3cb6a8-eb90-4d71-aef6-3909704c02fe" />
+  </Folder>
+</Solution>

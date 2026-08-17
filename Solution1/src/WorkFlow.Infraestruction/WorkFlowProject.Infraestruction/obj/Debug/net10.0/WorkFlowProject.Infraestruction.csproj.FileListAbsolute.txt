@@ -1,0 +1,16 @@
+C:\Users\thale\OneDrive\Documentos\repositorio-workflow-mvp\Solution1\src\WorkFlow.Infraestruction\WorkFlowProject.Infraestruction\bin\Debug\net10.0\WorkFlowProject.Infraestruction.deps.json
+C:\Users\thale\OneDrive\Documentos\repositorio-workflow-mvp\Solution1\src\WorkFlow.Infraestruction\WorkFlowProject.Infraestruction\bin\Debug\net10.0\WorkFlowProject.Infraestruction.dll
+C:\Users\thale\OneDrive\Documentos\repositorio-workflow-mvp\Solution1\src\WorkFlow.Infraestruction\WorkFlowProject.Infraestruction\bin\Debug\net10.0\WorkFlowProject.Infraestruction.pdb
+C:\Users\thale\OneDrive\Documentos\repositorio-workflow-mvp\Solution1\src\WorkFlow.Infraestruction\WorkFlowProject.Infraestruction\bin\Debug\net10.0\WorkFlowProject.Domain.dll
+C:\Users\thale\OneDrive\Documentos\repositorio-workflow-mvp\Solution1\src\WorkFlow.Infraestruction\WorkFlowProject.Infraestruction\bin\Debug\net10.0\WorkFlowProject.Domain.pdb
+C:\Users\thale\OneDrive\Documentos\repositorio-workflow-mvp\Solution1\src\WorkFlow.Infraestruction\WorkFlowProject.Infraestruction\obj\Debug\net10.0\WorkFlowProject.Infraestruction.csproj.AssemblyReference.cache
+C:\Users\thale\OneDrive\Documentos\repositorio-workflow-mvp\Solution1\src\WorkFlow.Infraestruction\WorkFlowProject.Infraestruction\obj\Debug\net10.0\WorkFlowProject.Infraestruction.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\thale\OneDrive\Documentos\repositorio-workflow-mvp\Solution1\src\WorkFlow.Infraestruction\WorkFlowProject.Infraestruction\obj\Debug\net10.0\WorkFlowProject.Infraestruction.AssemblyInfoInputs.cache
+C:\Users\thale\OneDrive\Documentos\repositorio-workflow-mvp\Solution1\src\WorkFlow.Infraestruction\WorkFlowProject.Infraestruction\obj\Debug\net10.0\WorkFlowProject.Infraestruction.AssemblyInfo.cs
+C:\Users\thale\OneDrive\Documentos\repositorio-workflow-mvp\Solution1\src\WorkFlow.Infraestruction\WorkFlowProject.Infraestruction\obj\Debug\net10.0\WorkFlowProject.Infraestruction.csproj.CoreCompileInputs.cache
+C:\Users\thale\OneDrive\Documentos\repositorio-workflow-mvp\Solution1\src\WorkFlow.Infraestruction\WorkFlowProject.Infraestruction\obj\Debug\net10.0\WorkFlowProject.Infraestruction.sourcelink.json
+C:\Users\thale\OneDrive\Documentos\repositorio-workflow-mvp\Solution1\src\WorkFlow.Infraestruction\WorkFlowProject.Infraestruction\obj\Debug\net10.0\WorkFlow.7D4A2A99.Up2Date
+C:\Users\thale\OneDrive\Documentos\repositorio-workflow-mvp\Solution1\src\WorkFlow.Infraestruction\WorkFlowProject.Infraestruction\obj\Debug\net10.0\WorkFlowProject.Infraestruction.dll
+C:\Users\thale\OneDrive\Documentos\repositorio-workflow-mvp\Solution1\src\WorkFlow.Infraestruction\WorkFlowProject.Infraestruction\obj\Debug\net10.0\refint\WorkFlowProject.Infraestruction.dll
+C:\Users\thale\OneDrive\Documentos\repositorio-workflow-mvp\Solution1\src\WorkFlow.Infraestruction\WorkFlowProject.Infraestruction\obj\Debug\net10.0\WorkFlowProject.Infraestruction.pdb
+C:\Users\thale\OneDrive\Documentos\repositorio-workflow-mvp\Solution1\src\WorkFlow.Infraestruction\WorkFlowProject.Infraestruction\obj\Debug\net10.0\ref\WorkFlowProject.Infraestruction.dll
