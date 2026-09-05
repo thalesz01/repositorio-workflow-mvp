@@ -17,24 +17,63 @@ Visão detalhada da arquitetura e do modelo de dados: [OVERVIEW.md](OVERVIEW.md)
 
 ## Configuração local
 
-A connection string **não é versionada**. Configure-a localmente com User Secrets
-(um comando por projeto, na pasta do projeto):
+### 1. Criar o seu appsettings.json
+
+Os `appsettings.json` **não são versionados** — eles carregam connection strings com
+credenciais. O repositório traz apenas o modelo. Copie-o em cada projeto e preencha:
 
 ```bash
-dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Data Source=localhost;Initial Catalog=WORKFLOW_PROJECT;Integrated Security=True;Encrypt=True;Trust Server Certificate=True"
+cp src/WorkFlowProject.API/appsettings.Example.json src/WorkFlowProject.API/appsettings.json
 ```
-
-Alternativa por variável de ambiente:
 
 ```bash
-setx ConnectionStrings__DefaultConnection "Data Source=localhost;Initial Catalog=WORKFLOW_PROJECT;Integrated Security=True;Encrypt=True;Trust Server Certificate=True"
+cp src/WorkFlowProject.Worker/appsettings.Example.json src/WorkFlowProject.Worker/appsettings.json
 ```
 
-Se preferir autenticação SQL em vez de `Integrated Security`, troque por
-`User ID=...;Password=...` — mas **nunca** commite essa string.
+Alternativa sem tocar no arquivo: mantenha o `Password=` vazio e informe a senha por
+`dotnet user-secrets` (ver passo 3).
+
+### 2. Criar o login da aplicação
+
+A aplicação **não usa o `sa`**. Ela se conecta com um login dedicado que tem apenas
+leitura e escrita no banco `WorkFlow_Project` — se a credencial vazar, o estrago
+fica contido a este banco em vez da instância inteira.
+
+Rode uma vez, a partir de `src/WorkFlowProject.Infrastructure/Scripts`:
+
+```bash
+sqlcmd -S localhost,1433 -U sa -i CreateAppLogin.sql -v AppLogin="workflow_app" -v AppPassword="SuaSenhaForte#2026"
+```
+
+O script é idempotente. A senha não fica no arquivo: entra por variável do `sqlcmd`.
+
+### 3. Informar a senha à aplicação
+
+O `appsettings.json` já traz a connection string com `User ID=workflow_app`, mas com
+`Password=` **vazio** de propósito, para que nenhuma credencial seja versionada.
+
+Passe a senha por User Secrets. Atenção: o User Secrets substitui a chave
+`ConnectionStrings:DefaultConnection` **inteira**, não apenas a senha — então repita
+a string completa. Rode na pasta de cada projeto (`src/WorkFlowProject.API` e
+`src/WorkFlowProject.Worker`):
+
+```bash
+dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Data Source=localhost;Initial Catalog=WorkFlow_Project;User ID=workflow_app;Password=SuaSenhaForte#2026;Pooling=False;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Authentication=SqlPassword;Application Name=vscode-mssql;Application Intent=ReadWrite;Command Timeout=30"
+```
+
+Alternativa por variável de ambiente (o `__` equivale ao `:` da chave):
+
+```bash
+setx ConnectionStrings__DefaultConnection "Data Source=localhost;Initial Catalog=WorkFlow_Project;User ID=workflow_app;Password=SuaSenhaForte#2026;..."
+```
+
+**Nunca** preencha a senha direto no `appsettings.json` — esse arquivo é versionado.
+
+### Schema
 
 O schema do banco está em
-`src/WorkFlowProject.Infrastructure/Scripts/CreateTables.sql`.
+`src/WorkFlowProject.Infrastructure/Scripts/CreateTables.sql`. Rode-o **antes** do
+`CreateAppLogin.sql`, já que o login precisa que o banco `WorkFlow_Project` exista.
 
 ## Build e execução
 

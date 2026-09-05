@@ -61,9 +61,13 @@ coverage*.info
 # ---------------------------------------------
 *.env
 .env.*
-appsettings.Local.json
-appsettings.*.Local.json
 secrets.json
+
+# appsettings NAO sao versionados: carregam connection strings com credenciais.
+# Cada dev cria o seu a partir do appsettings.Example.json versionado ao lado.
+**/appsettings.json
+**/appsettings.*.json
+!**/appsettings.Example.json
 
 # ---------------------------------------------
 # Sistema operacional

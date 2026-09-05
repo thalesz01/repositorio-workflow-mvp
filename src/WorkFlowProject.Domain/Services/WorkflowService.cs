@@ -19,14 +19,14 @@ public class WorkflowService : IWorkflowService
 
     public async Task<Workflow> CreateAsync(string name)
     {
-        var workflow = new Workflow(name);
+        Workflow workflow = new Workflow(name);
         await _workflowRepository.CreateAsync(workflow);
         return workflow;
     }
 
     public async Task<Workflow> GetByIdAsync(Guid id)
     {
-        var workflow = await _workflowRepository.GetByIdAsync(id);
+        Workflow? workflow = await _workflowRepository.GetByIdAsync(id);
         return workflow ?? throw new WorkflowNotFoundException(id);
     }
 

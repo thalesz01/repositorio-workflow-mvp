@@ -1,3 +1,4 @@
+using WorkFlowProject.Domain.Entities;
 using WorkFlowProject.Domain.Interfaces.Services;
 
 namespace WorkFlowProject.Worker;
@@ -33,11 +34,11 @@ public class Worker(
 
     private async Task ExecutePendingWorkflowsAsync(CancellationToken stoppingToken)
     {
-        using var scope = serviceScopeFactory.CreateScope();
-        var executionService = scope.ServiceProvider.GetRequiredService<IWorkflowExecutionService>();
-        var executions = await executionService.GetPendingExecutionsAsync();
+        using IServiceScope scope = serviceScopeFactory.CreateScope();
+        IWorkflowExecutionService executionService = scope.ServiceProvider.GetRequiredService<IWorkflowExecutionService>();
+        IEnumerable<WorkflowExecution> executions = await executionService.GetPendingExecutionsAsync();
 
-        foreach (var execution in executions)
+        foreach (WorkflowExecution execution in executions)
         {
             stoppingToken.ThrowIfCancellationRequested();
 

@@ -18,7 +18,7 @@ public class WorkflowExecutionRepository : BaseRepository, IWorkflowExecutionRep
     public async Task<WorkflowExecution?> GetByIdAsync(Guid id)
     {
         const string sql = "SELECT Id, WorkflowId, Status, CurrentNodeId, StartedAt, FinishedAt FROM WorkflowExecutions WHERE Id = @Id";
-        var row = await QueryFirstOrDefaultAsync<WorkflowExecutionRow>(sql, new { Id = id });
+        WorkflowExecutionRow? row = await QueryFirstOrDefaultAsync<WorkflowExecutionRow>(sql, new { Id = id });
         return row is null ? null : MapToEntity(row);
     }
 
@@ -29,7 +29,7 @@ public class WorkflowExecutionRepository : BaseRepository, IWorkflowExecutionRep
                               WHERE Status IN (@Pending, @Running)
                               ORDER BY StartedAt";
 
-        var rows = await QueryAsync<WorkflowExecutionRow>(sql, new
+        IEnumerable<WorkflowExecutionRow> rows = await QueryAsync<WorkflowExecutionRow>(sql, new
         {
             Pending = (int)ExecutionStatus.Pending,
             Running = (int)ExecutionStatus.Running

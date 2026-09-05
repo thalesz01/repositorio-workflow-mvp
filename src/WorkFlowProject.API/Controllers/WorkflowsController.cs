@@ -28,7 +28,7 @@ public class WorkflowsController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<WorkflowResponse>>> GetAll()
     {
-        var workflows = await _workflowService.GetAllAsync();
+        IEnumerable<Workflow> workflows = await _workflowService.GetAllAsync();
         return Ok(workflows.Select(ToResponse));
     }
 
@@ -40,7 +40,7 @@ public class WorkflowsController : ControllerBase
     {
         try
         {
-            var workflow = await _workflowService.GetByIdAsync(id);
+            Workflow workflow = await _workflowService.GetByIdAsync(id);
             return Ok(ToResponse(workflow));
         }
         catch (WorkflowNotFoundException ex)
@@ -55,7 +55,7 @@ public class WorkflowsController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<WorkflowResponse>> Create([FromBody] CreateWorkflowRequest request)
     {
-        var workflow = await _workflowService.CreateAsync(request.Name);
+        Workflow workflow = await _workflowService.CreateAsync(request.Name);
         return CreatedAtAction(nameof(GetById), new { id = workflow.Id }, ToResponse(workflow));
     }
 
@@ -68,7 +68,7 @@ public class WorkflowsController : ControllerBase
         try
         {
             await _workflowService.GetByIdAsync(workflowId);
-            var nodes = await _nodeService.GetByWorkflowIdAsync(workflowId);
+            IEnumerable<Node> nodes = await _nodeService.GetByWorkflowIdAsync(workflowId);
             return Ok(nodes.Select(ToResponse));
         }
         catch (WorkflowNotFoundException ex)
@@ -85,7 +85,7 @@ public class WorkflowsController : ControllerBase
     {
         try
         {
-            var node = await _nodeService.GetByIdAsync(nodeId);
+            Node node = await _nodeService.GetByIdAsync(nodeId);
 
             if (node.WorkflowId != workflowId)
             {
@@ -148,7 +148,7 @@ public class WorkflowsController : ControllerBase
     {
         try
         {
-            var execution = await _workflowExecutionService.StartExecutionAsync(workflowId);
+            WorkflowExecution execution = await _workflowExecutionService.StartExecutionAsync(workflowId);
             return CreatedAtAction(nameof(GetExecution), new { workflowId, executionId = execution.Id }, ToResponse(execution));
         }
         catch (WorkflowNotFoundException ex)
@@ -165,14 +165,14 @@ public class WorkflowsController : ControllerBase
     {
         try
         {
-            var execution = await _workflowExecutionService.GetExecutionAsync(executionId);
+            WorkflowExecution execution = await _workflowExecutionService.GetExecutionAsync(executionId);
 
             if (execution.WorkflowId != workflowId)
             {
                 return NotFound();
             }
 
-            var logs = await _workflowExecutionService.GetExecutionLogsAsync(executionId);
+            IEnumerable<WorkflowExecutionLog> logs = await _workflowExecutionService.GetExecutionLogsAsync(executionId);
             return Ok(ToResponse(execution, logs));
         }
         catch (WorkflowExecutionNotFoundException ex)
@@ -193,7 +193,7 @@ public class WorkflowsController : ControllerBase
 
     private static WorkflowExecutionResponse ToResponse(WorkflowExecution execution, IEnumerable<WorkflowExecutionLog> logs)
     {
-        var response = ToResponse(execution);
+        WorkflowExecutionResponse response = ToResponse(execution);
         response.Logs = logs.Select(log => new WorkflowExecutionLogResponse
         {
             Id = log.Id,
@@ -215,7 +215,7 @@ public class WorkflowsController : ControllerBase
 
     private static NodeResponse ToResponse(Node node)
     {
-        var response = new NodeResponse
+        NodeResponse response = new NodeResponse
         {
             Id = node.Id,
             WorkflowId = node.WorkflowId,

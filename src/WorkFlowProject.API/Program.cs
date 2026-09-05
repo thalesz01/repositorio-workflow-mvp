@@ -6,13 +6,22 @@ using WorkFlowProject.Infrastructure.Executors;
 using WorkFlowProject.Infrastructure.Repositories;
 using Scalar.AspNetCore;
 
-var builder = WebApplication.CreateBuilder(args);
+const string AllowAllCorsPolicy = "AllowAll";
+
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(AllowAllCorsPolicy, policy => policy
+        .AllowAnyOrigin()
+        .AllowAnyMethod()
+        .AllowAnyHeader());
+});
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<IDbConnectionFactory, SqlConnectionFactory>();
 builder.Services.AddScoped<IWorkflowRepository, WorkflowRepository>();
@@ -27,7 +36,7 @@ builder.Services.AddScoped<IWorkflowExecutionService, WorkflowExecutionService>(
 builder.Services.AddScoped<INodeExecutor, SqlNodeExecutor>();
 builder.Services.AddScoped<INodeExecutor, HttpNodeExecutor>();
 
-var app = builder.Build();
+WebApplication app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -37,6 +46,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors(AllowAllCorsPolicy);
 
 app.UseAuthorization();
 

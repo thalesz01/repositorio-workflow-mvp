@@ -24,9 +24,9 @@ public class NodeService : INodeService
 
     public async Task<SqlNode> CreateSqlNodeAsync(Guid workflowId, string name, string connectionStringKey, string table, List<string> fields)
     {
-        var (order, lastNode) = await GetNextOrderAndLastNodeAsync(workflowId);
+        (int order, Node? lastNode) = await GetNextOrderAndLastNodeAsync(workflowId);
 
-        var node = new SqlNode(workflowId, name, order, connectionStringKey, new SqlCommand(table, fields));
+        SqlNode node = new SqlNode(workflowId, name, order, connectionStringKey, new SqlCommand(table, fields));
         await _nodeRepository.CreateAsync(node);
         await LinkPreviousNodeAsync(lastNode, node.Id);
 
@@ -35,9 +35,9 @@ public class NodeService : INodeService
 
     public async Task<HttpNode> CreateHttpNodeAsync(Guid workflowId, string name, string url, HttpMethodType method, string? body, Dictionary<string, string>? headers)
     {
-        var (order, lastNode) = await GetNextOrderAndLastNodeAsync(workflowId);
+        (int order, Node? lastNode) = await GetNextOrderAndLastNodeAsync(workflowId);
 
-        var node = new HttpNode(workflowId, name, order, new HttpCommand(url, method, body, headers));
+        HttpNode node = new HttpNode(workflowId, name, order, new HttpCommand(url, method, body, headers));
         await _nodeRepository.CreateAsync(node);
         await LinkPreviousNodeAsync(lastNode, node.Id);
 
@@ -46,7 +46,7 @@ public class NodeService : INodeService
 
     public async Task<Node> GetByIdAsync(Guid nodeId)
     {
-        var node = await _nodeRepository.GetByIdAsync(nodeId);
+        Node? node = await _nodeRepository.GetByIdAsync(nodeId);
         return node ?? throw new NodeNotFoundException(nodeId);
     }
 
@@ -57,14 +57,14 @@ public class NodeService : INodeService
     /// </summary>
     private async Task<(int Order, Node? LastNode)> GetNextOrderAndLastNodeAsync(Guid workflowId)
     {
-        var workflow = await _workflowRepository.GetByIdAsync(workflowId);
+        Workflow? workflow = await _workflowRepository.GetByIdAsync(workflowId);
         if (workflow is null)
         {
             throw new WorkflowNotFoundException(workflowId);
         }
 
-        var lastNode = await _nodeRepository.GetLastNodeAsync(workflowId);
-        var order = (lastNode?.Order ?? -1) + 1;
+        Node? lastNode = await _nodeRepository.GetLastNodeAsync(workflowId);
+        int order = (lastNode?.Order ?? -1) + 1;
 
         return (order, lastNode);
     }

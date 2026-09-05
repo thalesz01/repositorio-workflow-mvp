@@ -6,7 +6,7 @@ using WorkFlowProject.Infrastructure.Data;
 using WorkFlowProject.Infrastructure.Executors;
 using WorkFlowProject.Infrastructure.Repositories;
 
-var builder = Host.CreateApplicationBuilder(args);
+HostApplicationBuilder builder = Host.CreateApplicationBuilder(args);
 
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<IDbConnectionFactory, SqlConnectionFactory>();
@@ -21,5 +21,5 @@ builder.Services.AddScoped<INodeExecutor, SqlNodeExecutor>();
 builder.Services.AddScoped<INodeExecutor, HttpNodeExecutor>();
 builder.Services.AddHostedService<Worker>();
 
-var host = builder.Build();
+IHost host = builder.Build();
 host.Run();

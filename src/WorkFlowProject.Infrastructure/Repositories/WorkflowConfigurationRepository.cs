@@ -21,7 +21,7 @@ public class WorkflowConfigurationRepository : BaseRepository, IWorkflowConfigur
                              WHERE WorkflowId = @WorkflowId
                              ORDER BY [Key]";
 
-        var rows = await QueryAsync<WorkflowConfigurationRow>(sql, new { WorkflowId = workflowId });
+        IEnumerable<WorkflowConfigurationRow> rows = await QueryAsync<WorkflowConfigurationRow>(sql, new { WorkflowId = workflowId });
         return rows.Select(row => new WorkflowConfiguration(row.WorkflowId, row.ConfigurationKey, row.Value));
     }
 

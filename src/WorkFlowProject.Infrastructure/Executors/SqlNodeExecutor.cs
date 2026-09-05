@@ -6,6 +6,8 @@ using Microsoft.Extensions.Configuration;
 using WorkFlowProject.Domain.Entities;
 using WorkFlowProject.Domain.Enums;
 using WorkFlowProject.Domain.Interfaces.Services;
+// Desambigua do Microsoft.Data.SqlClient.SqlCommand, importado acima para o SqlConnection.
+using SqlCommand = WorkFlowProject.Domain.Entities.Commands.SqlCommand;
 
 namespace WorkFlowProject.Infrastructure.Executors;
 
@@ -26,10 +28,10 @@ public class SqlNodeExecutor : INodeExecutor
 
     public async Task<string?> ExecuteAsync(Node node, string? input)
     {
-        var sqlNode = (SqlNode)node;
-        var command = sqlNode.SqlCommand;
+        SqlNode sqlNode = (SqlNode)node;
+        SqlCommand command = sqlNode.SqlCommand;
 
-        var connectionString = _configuration.GetConnectionString(sqlNode.ConnectionStringKey);
+        string? connectionString = _configuration.GetConnectionString(sqlNode.ConnectionStringKey);
 
         if (string.IsNullOrWhiteSpace(connectionString))
         {
@@ -41,11 +43,11 @@ public class SqlNodeExecutor : INodeExecutor
             connectionString = sqlNode.ConnectionStringKey;
         }
 
-        var fields = string.Join(", ", command.Fields.Select(f => $"[{f}]"));
-        var sql = $"SELECT TOP 1 {fields} FROM [{command.Table}]";
+        string fields = string.Join(", ", command.Fields.Select(f => $"[{f}]"));
+        string sql = $"SELECT TOP 1 {fields} FROM [{command.Table}]";
 
         using IDbConnection connection = new SqlConnection(connectionString);
-        var result = await connection.QueryFirstOrDefaultAsync<dynamic>(sql);
+        dynamic? result = await connection.QueryFirstOrDefaultAsync<dynamic>(sql);
 
         return result is null ? null : JsonSerializer.Serialize((IDictionary<string, object>)result);
     }

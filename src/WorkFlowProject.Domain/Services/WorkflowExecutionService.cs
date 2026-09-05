@@ -28,12 +28,12 @@ public class WorkflowExecutionService(
     // Grava a execução do workflow e inicia a execução do primeiro node.
     public async Task<WorkflowExecution> StartExecutionAsync(Guid workflowId)
     {
-        var workflow = await _workflowRepository.GetByIdAsync(workflowId)
+        Workflow workflow = await _workflowRepository.GetByIdAsync(workflowId)
             ?? throw new WorkflowNotFoundException(workflowId);
 
-        var firstNode = workflow.Nodes.OrderBy(n => n.Order).FirstOrDefault();
+        Node? firstNode = workflow.Nodes.OrderBy(n => n.Order).FirstOrDefault();
 
-        var execution = new WorkflowExecution(workflowId, firstNode?.Id);
+        WorkflowExecution execution = new(workflowId, firstNode?.Id);
 
         if (firstNode is null)
         {
@@ -62,7 +62,7 @@ public class WorkflowExecutionService(
 
     public async Task ExecuteNextStepAsync(Guid executionId)
     {
-        var execution = await _workflowExecutionRepository.GetByIdAsync(executionId)
+        WorkflowExecution execution = await _workflowExecutionRepository.GetByIdAsync(executionId)
             ?? throw new WorkflowExecutionNotFoundException(executionId);
 
         if (execution.CurrentNodeId is null || execution.Status is ExecutionStatus.Completed or ExecutionStatus.Failed)
@@ -70,20 +70,20 @@ public class WorkflowExecutionService(
             return;
         }
 
-        var workflow = await _workflowRepository.GetByIdAsync(execution.WorkflowId)
+        Workflow workflow = await _workflowRepository.GetByIdAsync(execution.WorkflowId)
             ?? throw new WorkflowNotFoundException(execution.WorkflowId);
-        var nodes = workflow.Nodes.ToDictionary(node => node.Id);
+        Dictionary<Guid, Node> nodes = workflow.Nodes.ToDictionary(node => node.Id);
 
         // Vou retirar e colocar para preencher o input do node com o output do último node executado, caso exista.
-        var lastNodeExecution = await _nodeExecutionRepository.GetLastByWorkflowExecutionIdAsync(execution.Id);
-        var input = lastNodeExecution?.Output;
+        NodeExecution? lastNodeExecution = await _nodeExecutionRepository.GetLastByWorkflowExecutionIdAsync(execution.Id);
+        string? input = lastNodeExecution?.Output;
 
         while (execution.CurrentNodeId is Guid currentNodeId)
         {
-            var node = nodes.GetValueOrDefault(currentNodeId)
+            Node node = nodes.GetValueOrDefault(currentNodeId)
                 ?? throw new NodeNotFoundException(currentNodeId);
 
-            var executor = _nodeExecutors.FirstOrDefault(executor => executor.CanExecute(node))
+            INodeExecutor executor = _nodeExecutors.FirstOrDefault(executor => executor.CanExecute(node))
                 ?? throw new InvalidOperationException($"Nenhum executor encontrado para o Node do tipo '{node.Type}'.");
 
             execution.MarkAsRunning();
@@ -91,7 +91,7 @@ public class WorkflowExecutionService(
             await _workflowExecutionLogRepository.CreateAsync(
                 new WorkflowExecutionLog(execution.Id, node.Id, execution.Status));
 
-            var nodeExecution = new NodeExecution(execution.Id, node.Id, input);
+            NodeExecution nodeExecution = new NodeExecution(execution.Id, node.Id, input);
             await _nodeExecutionRepository.CreateAsync(nodeExecution);
 
             try

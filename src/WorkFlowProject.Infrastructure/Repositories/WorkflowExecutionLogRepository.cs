@@ -38,7 +38,7 @@ public class WorkflowExecutionLogRepository : BaseRepository, IWorkflowExecution
                              WHERE WorkflowExecutionId = @WorkflowExecutionId
                              ORDER BY CreatedAt";
 
-        var rows = await QueryAsync<WorkflowExecutionLogRow>(sql, new { WorkflowExecutionId = workflowExecutionId });
+        IEnumerable<WorkflowExecutionLogRow> rows = await QueryAsync<WorkflowExecutionLogRow>(sql, new { WorkflowExecutionId = workflowExecutionId });
         return rows.Select(row => new WorkflowExecutionLog(
             row.Id,
             row.WorkflowExecutionId,

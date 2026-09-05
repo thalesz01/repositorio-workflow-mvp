@@ -21,14 +21,14 @@ public class NodeRepository : BaseRepository, INodeRepository
     public async Task<Node?> GetByIdAsync(Guid id)
     {
         const string sql = "SELECT Id, WorkflowId, Name, [Order], Type, NextNodeId, ConnectionStringKey, CommandJson FROM Nodes WHERE Id = @Id";
-        var row = await QueryFirstOrDefaultAsync<NodeRow>(sql, new { Id = id });
+        NodeRow? row = await QueryFirstOrDefaultAsync<NodeRow>(sql, new { Id = id });
         return row is null ? null : MapToEntity(row);
     }
 
     public async Task<IEnumerable<Node>> GetByWorkflowIdAsync(Guid workflowId)
     {
         const string sql = "SELECT Id, WorkflowId, Name, [Order], Type, NextNodeId, ConnectionStringKey, CommandJson FROM Nodes WHERE WorkflowId = @WorkflowId ORDER BY [Order]";
-        var rows = await QueryAsync<NodeRow>(sql, new { WorkflowId = workflowId });
+        IEnumerable<NodeRow> rows = await QueryAsync<NodeRow>(sql, new { WorkflowId = workflowId });
         return rows.Select(MapToEntity);
     }
 
@@ -37,7 +37,7 @@ public class NodeRepository : BaseRepository, INodeRepository
         const string sql = @"INSERT INTO Nodes (Id, WorkflowId, Name, [Order], Type, NextNodeId, ConnectionStringKey, CommandJson)
                               VALUES (@Id, @WorkflowId, @Name, @Order, @Type, @NextNodeId, @ConnectionStringKey, @CommandJson)";
 
-        var (connectionStringKey, commandJson) = ExtractPersistenceData(node);
+        (string? connectionStringKey, string? commandJson) = ExtractPersistenceData(node);
 
         return ExecuteAsync(sql, new
         {
@@ -62,7 +62,7 @@ public class NodeRepository : BaseRepository, INodeRepository
     {
         const string sql = @"SELECT TOP 1 Id, WorkflowId, Name, [Order], Type, NextNodeId, ConnectionStringKey, CommandJson
                               FROM Nodes WHERE WorkflowId = @WorkflowId ORDER BY [Order] DESC";
-        var row = await QueryFirstOrDefaultAsync<NodeRow>(sql, new { WorkflowId = workflowId });
+        NodeRow? row = await QueryFirstOrDefaultAsync<NodeRow>(sql, new { WorkflowId = workflowId });
         return row is null ? null : MapToEntity(row);
     }
 
@@ -78,7 +78,7 @@ public class NodeRepository : BaseRepository, INodeRepository
 
     private static Node MapToEntity(NodeRow row)
     {
-        var type = (NodeType)row.Type;
+        NodeType type = (NodeType)row.Type;
 
         return type switch
         {

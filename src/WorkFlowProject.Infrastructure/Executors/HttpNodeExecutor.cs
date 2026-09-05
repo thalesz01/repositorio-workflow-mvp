@@ -1,6 +1,7 @@
 using System.Net.Http.Headers;
 using System.Text;
 using WorkFlowProject.Domain.Entities;
+using WorkFlowProject.Domain.Entities.Commands;
 using WorkFlowProject.Domain.Enums;
 using WorkFlowProject.Domain.Interfaces.Services;
 using WorkFlowProject.Domain.Services;
@@ -24,16 +25,16 @@ public class HttpNodeExecutor : INodeExecutor
 
     public async Task<string?> ExecuteAsync(Node node, string? input)
     {
-        var httpNode = (HttpNode)node;
-        var command = httpNode.HttpCommand;
+        HttpNode httpNode = (HttpNode)node;
+        HttpCommand command = httpNode.HttpCommand;
 
-        var client = _httpClientFactory.CreateClient(nameof(HttpNodeExecutor));
+        HttpClient client = _httpClientFactory.CreateClient(nameof(HttpNodeExecutor));
 
-        var body = command.Body is null ? null : PlaceholderResolver.Resolve(command.Body, input);
+        string? body = command.Body is null ? null : PlaceholderResolver.Resolve(command.Body, input);
 
-        using var request = new HttpRequestMessage(new HttpMethod(command.Method.ToString()), command.Url);
+        using HttpRequestMessage request = new HttpRequestMessage(new HttpMethod(command.Method.ToString()), command.Url);
 
-        foreach (var header in command.Headers)
+        foreach (KeyValuePair<string, string> header in command.Headers)
         {
             request.Headers.TryAddWithoutValidation(header.Key, header.Value);
         }
@@ -43,8 +44,8 @@ public class HttpNodeExecutor : INodeExecutor
             request.Content = new StringContent(body, Encoding.UTF8, "application/json");
         }
 
-        using var response = await client.SendAsync(request);
-        var content = await response.Content.ReadAsStringAsync();
+        using HttpResponseMessage response = await client.SendAsync(request);
+        string content = await response.Content.ReadAsStringAsync();
 
         response.EnsureSuccessStatusCode();
 

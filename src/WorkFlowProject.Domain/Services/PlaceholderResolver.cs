@@ -25,7 +25,7 @@ public static partial class PlaceholderResolver
         Dictionary<string, string>? values;
         try
         {
-            var document = JsonDocument.Parse(json);
+            JsonDocument document = JsonDocument.Parse(json);
             values = document.RootElement.EnumerateObject()
                 .ToDictionary(p => p.Name, p => p.Value.ToString());
         }
@@ -36,8 +36,8 @@ public static partial class PlaceholderResolver
 
         return PlaceholderPattern.Replace(text, match =>
         {
-            var key = match.Groups[1].Value;
-            return values.TryGetValue(key, out var value) ? value : match.Value;
+            string key = match.Groups[1].Value;
+            return values.TryGetValue(key, out string? value) ? value : match.Value;
         });
     }
 }

@@ -57,7 +57,7 @@ public class NodeExecutionRepository : BaseRepository, INodeExecutionRepository
                               WHERE WorkflowExecutionId = @WorkflowExecutionId
                               ORDER BY StartedAt DESC";
 
-        var row = await QueryFirstOrDefaultAsync<NodeExecutionRow>(sql, new { WorkflowExecutionId = workflowExecutionId });
+        NodeExecutionRow? row = await QueryFirstOrDefaultAsync<NodeExecutionRow>(sql, new { WorkflowExecutionId = workflowExecutionId });
         return row is null ? null : MapToEntity(row);
     }
 
@@ -68,7 +68,7 @@ public class NodeExecutionRepository : BaseRepository, INodeExecutionRepository
                               WHERE WorkflowExecutionId = @WorkflowExecutionId
                               ORDER BY StartedAt";
 
-        var rows = await QueryAsync<NodeExecutionRow>(sql, new { WorkflowExecutionId = workflowExecutionId });
+        IEnumerable<NodeExecutionRow> rows = await QueryAsync<NodeExecutionRow>(sql, new { WorkflowExecutionId = workflowExecutionId });
         return rows.Select(MapToEntity);
     }
 

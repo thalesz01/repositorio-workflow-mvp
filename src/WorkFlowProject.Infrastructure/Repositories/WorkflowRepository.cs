@@ -20,21 +20,21 @@ public class WorkflowRepository : BaseRepository, IWorkflowRepository
     public async Task<Workflow?> GetByIdAsync(Guid id)
     {
         const string sql = "SELECT Id, Name FROM Workflows WHERE Id = @Id";
-        var row = await QueryFirstOrDefaultAsync<WorkflowRow>(sql, new { Id = id });
+        WorkflowRow? row = await QueryFirstOrDefaultAsync<WorkflowRow>(sql, new { Id = id });
 
         if (row is null)
         {
             return null;
         }
 
-        var nodes = await _nodeRepository.GetByWorkflowIdAsync(id);
+        IEnumerable<Node> nodes = await _nodeRepository.GetByWorkflowIdAsync(id);
         return new Workflow(row.Id, row.Name, nodes);
     }
 
     public async Task<IEnumerable<Workflow>> GetAllAsync()
     {
         const string sql = "SELECT Id, Name FROM Workflows";
-        var rows = await QueryAsync<WorkflowRow>(sql);
+        IEnumerable<WorkflowRow> rows = await QueryAsync<WorkflowRow>(sql);
         return rows.Select(r => new Workflow(r.Id, r.Name));
     }
 
