@@ -1,0 +1,10 @@
+root = true
+
+[*.cs]
+# Convenção do projeto: tipos explícitos em vez de 'var'.
+csharp_style_var_for_built_in_types = false:warning
+csharp_style_var_when_type_is_apparent = false:warning
+csharp_style_var_elsewhere = false:warning
+
+# IDE0008 = "Use explicit type instead of 'var'".
+dotnet_diagnostic.IDE0008.severity = warning

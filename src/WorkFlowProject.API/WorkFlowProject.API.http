@@ -1,0 +1,105 @@
+@host = http://localhost:5137
+
+###############################################################################
+# Fluxo completo: criar workflow -> cadastrar nodes -> executar -> consultar
+#
+# Rode as requisicoes na ordem. Copie o "id" devolvido em cada passo para a
+# variavel correspondente logo abaixo.
+###############################################################################
+
+### 1. Criar o Workflow
+# @name criarWorkflow
+POST {{host}}/api/workflows
+Content-Type: application/json
+
+{
+  "name": "Consulta SRC_DEV"
+}
+
+### Copie o id devolvido acima para ca:
+@workflowId = 00000000-0000-0000-0000-000000000000
+
+
+###############################################################################
+# 2. Cadastrar um node SQL
+#
+# connectionStringKey = NOME DA CHAVE em ConnectionStrings do appsettings.json,
+# nao a connection string inteira. "SRC" resolve para o servidor 10.10.10.17.
+#
+# O executor monta: SELECT TOP 1 [campo1], [campo2] FROM [tabela]
+# Portanto "table" e "fields" precisam existir no banco alvo.
+###############################################################################
+
+### 2a. Node SQL apontando para SRC
+POST {{host}}/api/workflows/{{workflowId}}/nodes
+Content-Type: application/json
+
+{
+  "name": "Ler cliente no SRC",
+  "type": "Sql",
+  "connectionStringKey": "SRC",
+  "table": "CLIENTES",
+  "fields": ["ID", "NOME"]
+}
+
+### 2b. Node SQL apontando para o proprio banco do workflow
+POST {{host}}/api/workflows/{{workflowId}}/nodes
+Content-Type: application/json
+
+{
+  "name": "Ler workflow local",
+  "type": "Sql",
+  "connectionStringKey": "DefaultConnection",
+  "table": "Workflows",
+  "fields": ["Id", "Name"]
+}
+
+### 2c. Node HTTP (o resultado do node anterior chega como input)
+#
+# ATENCAO: "method" e NUMERICO, diferente de "type" que aceita string.
+# Em CreateNodeRequest so o campo Type tem [JsonStringEnumConverter];
+# Method nao tem, entao "Post" e rejeitado com HTTP 400.
+#   Get = 1 | Post = 2 | Put = 3 | Delete = 4 | Patch = 5
+POST {{host}}/api/workflows/{{workflowId}}/nodes
+Content-Type: application/json
+
+{
+  "name": "Notificar sistema externo",
+  "type": "Http",
+  "url": "https://httpbin.org/post",
+  "method": 2,
+  "headers": {
+    "Content-Type": "application/json"
+  },
+  "body": "{\"origem\":\"workflow-mvp\"}"
+}
+
+
+###############################################################################
+# 3. Executar e acompanhar
+#
+# O POST /execute apenas ENFILEIRA a execucao. Quem processa os nodes e o
+# Worker (WorkFlowProject.Worker), que faz polling a cada 2 segundos.
+# Ele precisa estar rodando, senao a execucao fica pendente para sempre.
+###############################################################################
+
+### 3a. Disparar a execucao
+# @name executar
+POST {{host}}/api/workflows/{{workflowId}}/execute
+
+### Copie o id da execucao devolvido acima:
+@executionId = 00000000-0000-0000-0000-000000000000
+
+### 3b. Consultar o andamento (repita ate concluir)
+GET {{host}}/api/workflows/{{workflowId}}/executions/{{executionId}}
+
+
+###############################################################################
+# 4. Consultas auxiliares
+###############################################################################
+
+### Listar workflows
+GET {{host}}/api/workflows
+
+### Listar nodes do workflow
+GET {{host}}/api/workflows/{{workflowId}}/nodes
